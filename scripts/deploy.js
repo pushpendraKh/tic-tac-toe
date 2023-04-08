@@ -7,20 +7,28 @@
 const hre = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
 
-  const lockedAmount = hre.ethers.utils.parseEther("0.001");
+  const Token = await hre.ethers.getContractFactory("Token");
+  const token = await Token.deploy();
+  await token.deployed();
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const TicTacToe = await hre.ethers.getContractFactory("TicTacToe");
+  const ticTacToe = await TicTacToe.deploy();
+  await ticTacToe.deployed();
 
-  await lock.deployed();
 
+  const NFT = await hre.ethers.getContractFactory("NFT");
+  const nft = await NFT.deploy();
+  await nft.deployed();
+  
   console.log(
-    `Lock with ${ethers.utils.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
+    `TicTacToe deployed to ${ticTacToe.address}`
+  );
+  console.log(
+    `Token deployed to ${token.address}`
+  );
+  console.log(
+    `NFT deployed to ${nft.address}`
   );
 }
 
