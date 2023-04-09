@@ -38,12 +38,15 @@ contract TicTacToe {
         Player winnerPlayer; // it will store the address of winner, if match is draw, then it will be zero address
         uint256[9] board;   // board array to record moves of players
         uint256 lastPlayedTime; // when last moved was played by a player
-        uint8 movedRecorded; // To note number of moves played on the board
+        uint8 movedRecorded; // To record number of moves played on the board
         GameState state; // Game's current state
     }
 
-    // Deployed Address for the Token  
-    address private constant TOKEN_CONTRACT_ADDRESS = 0x3328358128832A260C76A4141e19E2A943CD4B6D;
+    // Deployed Address for the Token 
+    address private constant TOKEN_CONTRACT_ADDRESS = 0x9D7f74d0C41E726EC95884E0e97Fa6129e3b5E99;
+
+    // Deployed Address for the NFT  
+    address private constant NFT_CONTRACT_ADDRESS = 0x803A219F1a575BF9D3E5874306DFB16352017c83;
 
     // Define Timeout for the game
     uint public constant GAME_TIMEOUT = 5 minutes;
@@ -75,8 +78,6 @@ contract TicTacToe {
     /// if there is a player waiting, it adds another player to the game and start the game.
 
     function joinRoom(Player calldata player) public returns (uint256) {
-        console.log("Joining room");
-        console.log(msg.sender);
         // Before joining the game, stake the required Token to play the game.
         stakeAmount(player.playerAddress, STAKE);
 
@@ -105,11 +106,12 @@ contract TicTacToe {
         require(rooms[gameId].isRoomActive, "Game is Over");
         require(rooms[gameId].board[boardIndex] == 0, "Another Player already played this move. Try another"); 
         require(msg.sender == rooms[gameId].players[rooms[gameId].activePlayer].playerAddress, "It's not your turn. Please wait");
-        // require(block.timestamp < rooms[gameId].lastPlayedTime + rooms[gameId].timeout, "Timeout: you took too long to make your move man");
 
         if(block.timestamp > rooms[gameId].lastPlayedTime + GAME_TIMEOUT) {
             console.log("%s, sadly you have exceeded time to record a move :(. You lost the game", rooms[gameId].players[rooms[gameId].activePlayer].playerName);
             endGameAndAnnounceWinner(gameId, (rooms[gameId].activePlayer + 1) % 2);
+            displayBoard(gameId);
+            return;
         }
 
         // record the move in the game
@@ -122,7 +124,7 @@ contract TicTacToe {
         if (checkWinner(whichPlayer, rooms[gameId].board)) {
             endGameAndAnnounceWinner(gameId,rooms[gameId].activePlayer);
         } else if (rooms[gameId].movedRecorded == 9) {
-            console.log("Alias!! It's a draw. Returning your hard earned token back to you.");
+            console.log("Alias!! It's a draw. No problem, returning your hard earned tokens back to you. Visit us soon!");
             rooms[gameId].isRoomActive = false;
             rooms[gameId].state = GameState.DRAW;
 
@@ -130,11 +132,14 @@ contract TicTacToe {
             IERC20 token = IERC20(TOKEN_CONTRACT_ADDRESS);
             token.transfer(rooms[gameId].players[0].playerAddress, STAKE);
             token.transfer(rooms[gameId].players[1].playerAddress, STAKE);
-            return;
+            
+        } else {
+            rooms[gameId].activePlayer = whichPlayer % 2;
+            rooms[gameId].lastPlayedTime = block.timestamp;
         }
 
-        rooms[gameId].activePlayer = whichPlayer % 2;
-        rooms[gameId].lastPlayedTime = block.timestamp;
+        // Display board for visiblity for another player.
+        displayBoard(gameId);    
     }
 
     // @dev Check if a player has won the game.
@@ -154,10 +159,11 @@ contract TicTacToe {
         rooms[gameId].winnerPlayer = rooms[gameId].players[winnerPlayerIndex];
         rooms[gameId].state = GameState.WINNING;
         rewardWinner(gameId);
-
+        
         emit GameEnded(gameId,rooms[gameId]);
 
         console.log("Congratulations %s for winning the game.", rooms[gameId].winnerPlayer.playerName);
+        console.log("You are rewarded with %s HRPP coins", STAKE * 2);
     }
 
  
@@ -171,13 +177,14 @@ contract TicTacToe {
         return rooms[gameId].isRoomActive;
     }
 
-    /// A function to check game state. 
-    /// It can be used to know when a player does not make a move and you want to check and update game state.
-    function CheckGameState(uint gameId) public returns (bool, GameState) {
+    /// A function to check a particular game's state.
+    /// 
+    /// It is used to check and update the game's room when a player does not make a move and expires his alloted time.
+    function updateRoomIfExpired(uint gameId) public returns (GameState) {
         if(block.timestamp > rooms[gameId].lastPlayedTime + GAME_TIMEOUT && rooms[gameId].state == GameState.RUNNING) {
             endGameAndAnnounceWinner(gameId, (rooms[gameId].activePlayer + 1) % 2);    
         }
-        return (rooms[gameId].isRoomActive, rooms[gameId].state);
+        return rooms[gameId].state;
     }
 
     // Used to reward the winner of a game.
@@ -199,7 +206,6 @@ contract TicTacToe {
     // Stake amount while playing the game
     function stakeAmount(address sender, uint256 amount) private {
         IERC20 token = IERC20(TOKEN_CONTRACT_ADDRESS);
-        console.log(token.allowance(sender, address(this)));
         
         require(
             token.allowance(sender, address(this)) >= amount,
@@ -209,9 +215,31 @@ contract TicTacToe {
         token.transferFrom(sender, address(this), amount);
     }
      
-    // Get the board state for a game Id 
+    // Display room's board current state for a game
     function getBoardForRoom(uint gameId) external view returns(uint256[9] memory) {
         require(rooms[gameId].players[0].playerAddress != address(0), "Game does not exist");
         return rooms[gameId].board;
+    }
+
+    function displayBoard(uint gameId) private view {
+        console.log("Here is the current state of board for Game %s", gameId);
+        uint[9] memory board = rooms[gameId].board;
+
+        console.log("%s | %s | %s", getBoardDisplayItem(board[0]), getBoardDisplayItem(board[1]), getBoardDisplayItem(board[2]));
+        console.log("---------");
+        console.log("%s | %s | %s", getBoardDisplayItem(board[3]), getBoardDisplayItem(board[4]), getBoardDisplayItem(board[5]));
+        console.log("---------");
+        console.log("%s | %s | %s", getBoardDisplayItem(board[6]), getBoardDisplayItem(board[7]), getBoardDisplayItem(board[8]));
+    }
+
+    function getBoardDisplayItem(uint _move) private pure returns (string memory)  {
+        if (_move == 1) {
+            return "X";
+        } else if (_move == 2) {
+            return "0";
+        } else {
+            return "-";
+        }
+
     }
 }
