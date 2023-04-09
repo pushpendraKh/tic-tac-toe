@@ -1,13 +1,7 @@
-# Sample Hardhat Project
+# Tic-Tac-Toe
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+### contracts
+This folder contains contracts, deployed abis.
 
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```
+### UI
+This is frontend part of tic tac toe. 
