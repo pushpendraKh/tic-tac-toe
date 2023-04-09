@@ -11,7 +11,7 @@ contract NFT is ERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
-    function safeMint(address to) public returns (uint256) {
+    function safeMint(address to) external returns (uint256) {
         _tokenIdCounter.increment();
         // get the current value after incrementing token id
         uint256 tokenId = _tokenIdCounter.current();

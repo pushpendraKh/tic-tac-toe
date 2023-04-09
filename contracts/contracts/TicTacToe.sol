@@ -189,7 +189,7 @@ contract TicTacToe {
     }
 
     // Mint NFT and reward to the winner of the game.
-    function rewardWinnerWithNFT(uint gameId) public {
+    function rewardWinnerWithNFT(uint gameId) private {
         require(rooms[gameId].winnerPlayer.playerAddress != address(0), "There is no winner yet"); 
 
         // Create a new NFT and give it to winner
