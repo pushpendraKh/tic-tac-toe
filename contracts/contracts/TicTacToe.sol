@@ -2,22 +2,13 @@
 
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
 import "./Token.sol";
 import "./NFT.sol";
 
-// TOKEN CONTRACT ACCOUNT - 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
-
-// TOKEN CONTRACT ADDRESS - 0x3328358128832A260C76A4141e19E2A943CD4B6D 
-
-// PLAYER 1 = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2 - push [0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,push]
-// PLAYER 2 = 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db - rohan [0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db,Rohan] 
-
-// TICK TAC TOE CONTRACT ADDRESS - 0x8862090A79412D034d9Fb8C9DBFd3194C8D2a2EE 
-
+// You will need TOKEN CONTRACT ADDRESS and NFT CONTRACT ADDRESS where they are deployed 
+// And Update in TicTacToe contract
 contract TicTacToe {
     struct Player {
         address payable playerAddress;
@@ -42,11 +33,12 @@ contract TicTacToe {
         GameState state; // Game's current state
     }
 
-    // Deployed Address for the Token 
-    address private constant TOKEN_CONTRACT_ADDRESS = 0x9D7f74d0C41E726EC95884E0e97Fa6129e3b5E99;
-
-    // Deployed Address for the NFT  
-    address private constant NFT_CONTRACT_ADDRESS = 0x803A219F1a575BF9D3E5874306DFB16352017c83;
+    // Deployed Address for the Token  
+    address private constant TOKEN_CONTRACT_ADDRESS = 0x0498B7c793D7432Cd9dB27fb02fc9cfdBAfA1Fd3;
+    IERC20 private token = IERC20(TOKEN_CONTRACT_ADDRESS);
+    
+    address private constant NFT_CONTRACT_ADDRESS = 0xA72D8d4c4611c702dE430124A240E54fC78fA905;
+    NFT private nft = NFT(NFT_CONTRACT_ADDRESS);
 
     // Define Timeout for the game
     uint public constant GAME_TIMEOUT = 5 minutes;
@@ -102,10 +94,12 @@ contract TicTacToe {
     /// Record a move by a player on the board for a given game ID
     function move(uint gameId, uint8 boardIndex) public {
         require(currentRoomId >= gameId, "Room does not exist");
+        require(boardIndex <= 8, "Invalid move. Please enter in the board.");
         require(msg.sender == rooms[gameId].players[0].playerAddress || msg.sender == rooms[gameId].players[1].playerAddress, "Unknown player");
         require(rooms[gameId].isRoomActive, "Game is Over");
         require(rooms[gameId].board[boardIndex] == 0, "Another Player already played this move. Try another"); 
         require(msg.sender == rooms[gameId].players[rooms[gameId].activePlayer].playerAddress, "It's not your turn. Please wait");
+        
 
         if(block.timestamp > rooms[gameId].lastPlayedTime + GAME_TIMEOUT) {
             console.log("%s, sadly you have exceeded time to record a move :(. You lost the game", rooms[gameId].players[rooms[gameId].activePlayer].playerName);
@@ -129,7 +123,6 @@ contract TicTacToe {
             rooms[gameId].state = GameState.DRAW;
 
             // return the staked money back to players
-            IERC20 token = IERC20(TOKEN_CONTRACT_ADDRESS);
             token.transfer(rooms[gameId].players[0].playerAddress, STAKE);
             token.transfer(rooms[gameId].players[1].playerAddress, STAKE);
             
@@ -158,12 +151,11 @@ contract TicTacToe {
         rooms[gameId].isRoomActive = false;
         rooms[gameId].winnerPlayer = rooms[gameId].players[winnerPlayerIndex];
         rooms[gameId].state = GameState.WINNING;
-        rewardWinner(gameId);
+        rewardWinnerWithToken(gameId);
+        rewardWinnerWithNFT(gameId);
         
         emit GameEnded(gameId,rooms[gameId]);
-
         console.log("Congratulations %s for winning the game.", rooms[gameId].winnerPlayer.playerName);
-        console.log("You are rewarded with %s HRPP coins", STAKE * 2);
     }
 
  
@@ -187,26 +179,31 @@ contract TicTacToe {
         return rooms[gameId].state;
     }
 
-    // Used to reward the winner of a game.
-    function rewardWinner(uint gameId) private {
+    // Used to reward Token to the winner of the game.
+    function rewardWinnerWithToken(uint gameId) private {
         require(rooms[gameId].winnerPlayer.playerAddress != address(0), "There is no winner yet");    
-
-        IERC20 token = IERC20(TOKEN_CONTRACT_ADDRESS);
         require(token.balanceOf(address(this)) >= STAKE*2, "You do not have suffient balance to reward");
         
         token.transfer(rooms[gameId].winnerPlayer.playerAddress, STAKE * 2);
+        console.log("You are rewarded with %s HRPP coins.", STAKE * 2);
+    }
+
+    // Mint NFT and reward to the winner of the game.
+    function rewardWinnerWithNFT(uint gameId) public {
+        require(rooms[gameId].winnerPlayer.playerAddress != address(0), "There is no winner yet"); 
+
+        // Create a new NFT and give it to winner
+        uint256 newTokenId = nft.safeMint(rooms[gameId].winnerPlayer.playerAddress);
+        console.log("You are rewarded with %s. Token ID - %s", nft.name(), newTokenId);
     }
 
     // To check balance of the contract
     function contractBalance() view external returns (uint256) {
-        IERC20 token = IERC20(TOKEN_CONTRACT_ADDRESS);
         return token.balanceOf(address(this));
     }
 
     // Stake amount while playing the game
     function stakeAmount(address sender, uint256 amount) private {
-        IERC20 token = IERC20(TOKEN_CONTRACT_ADDRESS);
-        
         require(
             token.allowance(sender, address(this)) >= amount,
             "Player has not given authority to transfer token from his account. Please ask him to approve the transfer."
