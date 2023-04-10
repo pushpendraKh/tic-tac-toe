@@ -61,6 +61,7 @@ contract TicTacToe {
     bool private isPlayerWaiting = false;
 
     // Events
+    event GameInitiated(uint256 indexed gameId, Room room);
     event GameStarted(uint256 indexed gameId, Room room);
     event GameEnded(uint256 indexed gameId, Room room);
 
@@ -69,7 +70,7 @@ contract TicTacToe {
     /// If there is no player, it will create a room where player can wait for another player
     /// if there is a player waiting, it adds another player to the game and start the game.
 
-    function joinRoom(Player calldata player) public returns (uint256) {
+    function joinRoom(Player calldata player) public {
         // Before joining the game, stake the required Token to play the game.
         stakeAmount(player.playerAddress, STAKE);
 
@@ -87,8 +88,8 @@ contract TicTacToe {
            isPlayerWaiting = true;
            console.log("Player 1 entered into game, waiting for player 2");
            rooms[currentRoomId].state = GameState.NOTSTART;
+           emit GameInitiated(currentRoomId, rooms[currentRoomId]);
         }
-        return currentRoomId;
     }
 
     /// Record a move by a player on the board for a given game ID
