@@ -37,11 +37,12 @@ contract TicTacToe {
     address private constant TOKEN_CONTRACT_ADDRESS = 0x0498B7c793D7432Cd9dB27fb02fc9cfdBAfA1Fd3;
     IERC20 private token = IERC20(TOKEN_CONTRACT_ADDRESS);
     
+    // Deployed Address for the NFT 
     address private constant NFT_CONTRACT_ADDRESS = 0xA72D8d4c4611c702dE430124A240E54fC78fA905;
     NFT private nft = NFT(NFT_CONTRACT_ADDRESS);
 
     // Define Timeout for the game
-    uint public constant GAME_TIMEOUT = 5 minutes;
+    uint public constant GAME_TIMEOUT = 2 minutes;
 
     // STAKING required by players of the game
     uint public constant STAKE = 100;  
@@ -52,7 +53,7 @@ contract TicTacToe {
     ];
 
     /// Mapping to store multiple Games
-    mapping (uint => Room) rooms;
+    mapping (uint => Room) public rooms;
 
     // Latest room ID
     uint private currentRoomId = 0;
@@ -114,7 +115,6 @@ contract TicTacToe {
         uint256 whichPlayer = rooms[gameId].activePlayer + 1;
         rooms[gameId].board[boardIndex] = whichPlayer;
         rooms[gameId].movedRecorded++;
-
 
         //check winner or game over conditions
         if (checkWinner(whichPlayer, rooms[gameId].board)) {
@@ -240,6 +240,9 @@ contract TicTacToe {
         } else {
             return "-";
         }
+    }
 
+    function totalGames() public view returns (uint) {
+        return currentRoomId;
     }
 }
