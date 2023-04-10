@@ -492,8 +492,8 @@
       ]
     },
     "/Users/pushpendra.khandelwal/Desktop/web3_training/tic-tac-toe/contracts/contracts/TicTacToe.sol": {
-      "lastModificationDate": 1681102808537,
-      "contentHash": "bb447755c3053e5fcb629a7e4b3dc48d",
+      "lastModificationDate": 1681124345273,
+      "contentHash": "da9a916ea810941ff9f16ded3bbc9759",
       "sourceName": "contracts/TicTacToe.sol",
       "solcConfig": {
         "version": "0.8.17",
