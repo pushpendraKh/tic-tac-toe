@@ -6,20 +6,25 @@
     </div>
     {{ loginAddress }}
     <div class="footer">
-      <div>
-        <div>
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div>
-              <label>Enter Player1 Name</label>
+      <div class="form-parent-wrapper">
+        <div class="form-child-wrapper">
+          <form
+            [formGroup]="loginForm"
+            class="form-wrapper"
+            (ngSubmit)="onSubmit()"
+          >
+            <div class="label-input-wrapper">
+              <label>Enter Your Name</label>
               <input formControlName="name" type="text" />
             </div>
 
             <button type="submit" [disabled]="!loginForm.valid">Join</button>
           </form>
         </div>
+        <div class="message">{{ gamStatus }}</div>
       </div>
       <div class="footer-content">
-        <h1 class="game-name">TIC-TAC-TOE{{ gamStatus }}</h1>
+        <h1 class="game-name">TIC-TAC-TOE</h1>
         <h2 class="dcx-name">presented by coinDCX!!!..</h2>
       </div>
       <div class="dashboard">

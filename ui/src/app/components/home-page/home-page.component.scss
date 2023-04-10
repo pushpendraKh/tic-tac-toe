@@ -31,6 +31,7 @@
       margin-top: 100px;
       justify-content: space-evenly;
       padding: 20px;
+
       .footer-content {
         display: flex;
         align-items: center;
@@ -42,6 +43,51 @@
       }
       .dashboard {
         width: 100%;
+      }
+      .form-parent-wrapper {
+        position: absolute;
+        top: 12%;
+        right: 2%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .form-child-wrapper {
+          border: 1px solid;
+          padding: 20px;
+          .form-wrapper {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            .label-input-wrapper {
+              display: flex;
+              flex-direction: column;
+              margin-bottom: 15px;
+              label {
+                margin-bottom: 10px;
+                font-size: 1.4rem;
+              }
+              input {
+                height: 25px;
+              }
+            }
+            button {
+              background-color: #fa4a29;
+              border-radius: 0.5rem;
+              border: none;
+              color: #fff;
+              padding: 0.5rem 2.5rem;
+              font-size: 1.4rem;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+            }
+          }
+        }
+        .message {
+          font-size: 20px;
+          color: #fa4a28;
+          margin-top: 30px;
+        }
       }
     }
   }

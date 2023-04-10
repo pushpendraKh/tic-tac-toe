@@ -1,30 +1,49 @@
 <div class="everything-wrapper">
-  <div>
-    <h1
-      class="text-center text-orange"
-      *ngIf="isGameRunning"
-      [ngClass]="{ 'text-teal': activePlayer == 'O' }"
-    >
-      {{ activePlayer }}'S TURN
-    </h1>
-    <h1 class="" *ngIf="winner">{{ winnerName }} WON</h1>
-    <div class="section-wrapper">
-      <div class="square-container underline" *ngFor="let square of board">
-        <div
-          class="game-square rounded-lg border bg-teal-lightest shadow-md"
-          (click)="changePlayer(square)"
-          [ngClass]="{ noClick: winner }"
+  <div class="title">
+    <h2>Game Room</h2>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="board-timer">
+      <div>
+        <h1
+          class="text-center text-orange"
+          *ngIf="isGameRunning"
+          [ngClass]="{ 'text-teal': activePlayer == 'O' }"
         >
-          <p class="text-grey-darker">{{ square.state }}</p>
+          {{ activePlayer }}'S TURN
+        </h1>
+        <div class="section-wrapper">
+          <div class="square-container underline" *ngFor="let square of board">
+            <div
+              class="game-square rounded-lg border bg-teal-lightest shadow-md"
+              (click)="changePlayer(square)"
+              [ngClass]="{ noClick: winner }"
+            >
+              <p class="text-grey-darker">{{ square.state }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timmer-wrapper">
+        <h2>Timer</h2>
+        <div class="display-time">
+          {{ display }}
         </div>
       </div>
     </div>
-  </div>
 
-  <div>
-    <h2>Timer</h2>
-    <div className="App">
-      {{ display }}
+    <div class="detials-wrapper">
+      <h3>Details</h3>
+      <div class="detials-sub-wrapper">
+        <ul>
+          <li>WinnerName: {{ winnerName }}</li>
+          <li>WinnerName: {{ winnerName }}</li>
+          <li>WinnerName: {{ winnerName }}</li>
+          <li>WinnerName: {{ winnerName }}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

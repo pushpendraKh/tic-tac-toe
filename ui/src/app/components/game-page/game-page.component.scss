@@ -1,5 +1,5 @@
 .section-wrapper {
-  width: 600px;
+  width: 400px;
   display: flex;
   justify-content: space-evenly;
   align-content: center;
@@ -8,13 +8,23 @@
 }
 .everything-wrapper {
   height: 100vh;
+  flex-direction: column;
   display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.title {
+  h2 {
+    font-size: 35px;
+    text-decoration: underline;
+  }
 }
 
 .square-container {
   flex: 0 0 32%;
   font-weight: 700;
-  height: 265px;
+  height: 120px;
 }
 
 .game-square {
@@ -31,10 +41,49 @@
 p {
   display: inline;
   margin: 0px;
-  font-size: 14rem;
+  font-size: 9rem;
   overflow: hidden;
 }
 
 .noClick {
   pointer-events: none;
+}
+
+.timmer-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .display-time {
+    color: red;
+    font-size: 24px;
+  }
+}
+
+.content-wrapper {
+  width: 100%;
+  display: flex;
+}
+
+.board-timer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.detials-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  h3 {
+    text-align: center;
+    font-size: 25px;
+    text-decoration: underline;
+  }
+}
+.detials-sub-wrapper {
+  font-size: 19px;
+  li {
+    margin-bottom: 10px;
+  }
 }

@@ -1,4 +1,11 @@
 <div>
+  <div class="loader" *ngIf="loader">
+    <div class="lds-facebook">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
   <div class="app__router-outlet">
     <router-outlet></router-outlet>
   </div>
