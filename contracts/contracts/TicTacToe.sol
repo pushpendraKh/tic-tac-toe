@@ -64,6 +64,7 @@ contract TicTacToe {
     event GameInitiated(uint256 indexed gameId, Room room);
     event GameStarted(uint256 indexed gameId, Room room);
     event GameEnded(uint256 indexed gameId, Room room);
+    event PlayedMoved(uint256 indexed gameId, Room room);
 
     /// Allow a player to join the room and return the game ID
     ///
@@ -132,6 +133,7 @@ contract TicTacToe {
             rooms[gameId].lastPlayedTime = block.timestamp;
         }
 
+        emit PlayedMoved(gameId, rooms[gameId]);
         // Display board for visiblity for another player.
         displayBoard(gameId);    
     }
