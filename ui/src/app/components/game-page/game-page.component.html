@@ -1,0 +1,30 @@
+<div class="everything-wrapper">
+  <div>
+    <h1
+      class="text-center text-orange"
+      *ngIf="isGameRunning"
+      [ngClass]="{ 'text-teal': activePlayer == 'O' }"
+    >
+      {{ activePlayer }}'S TURN
+    </h1>
+    <h1 class="" *ngIf="winner">{{ winnerName }} WON</h1>
+    <div class="section-wrapper">
+      <div class="square-container underline" *ngFor="let square of board">
+        <div
+          class="game-square rounded-lg border bg-teal-lightest shadow-md"
+          (click)="changePlayer(square)"
+          [ngClass]="{ noClick: winner }"
+        >
+          <p class="text-grey-darker">{{ square.state }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h2>Timer</h2>
+    <div className="App">
+      {{ display }}
+    </div>
+  </div>
+</div>
