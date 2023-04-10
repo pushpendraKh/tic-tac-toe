@@ -1,0 +1,11 @@
+<div>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label>Enter your Name</label>
+      <input formControlName="name" type="text" />
+    </div>
+    <button [mat-dialog-close] type="submit" [disabled]="!loginForm.valid">
+      Join
+    </button>
+  </form>
+</div>

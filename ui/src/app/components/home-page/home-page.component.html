@@ -1,0 +1,48 @@
+<div class="page-wrapper-everything">
+  <div class="content-wrapper">
+    <div class="header">
+      <img src="https://coindcx.com/assets/new-home-pagee/Logo_CoinDCX.svg" />
+      <button (click)="login()" class="login-btn">Login</button>
+    </div>
+    {{ loginAddress }}
+    <div class="footer">
+      <div>
+        <div>
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div>
+              <label>Enter Player1 Name</label>
+              <input formControlName="name" type="text" />
+            </div>
+
+            <button type="submit" [disabled]="!loginForm.valid">Join</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-content">
+        <h1 class="game-name">TIC-TAC-TOE{{ gamStatus }}</h1>
+        <h2 class="dcx-name">presented by coinDCX!!!..</h2>
+      </div>
+      <div class="dashboard">
+        <h3>
+          <u>Leaderboard</u>
+        </h3>
+        <table class="table-wrapper">
+          <tbody>
+            <tr>
+              <th>GameId</th>
+              <th>Status</th>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>false</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>true</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
