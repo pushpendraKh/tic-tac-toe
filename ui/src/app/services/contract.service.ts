@@ -1,464 +1,119 @@
+import { Injectable } from '@angular/core';
+import Web3 from 'web3';
+import CONSTANTS from '../constant';
 import { BehaviorSubject } from "rxjs";
-import { Injectable } from "@angular/core";
-import Web3 from "web3";
+import { Router } from "@angular/router";
 
 declare const window: any;
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ContractService {
   public loader$ = new BehaviorSubject<boolean>(false);
-  window: any;
-  gameID: any;
-  Address = "0x232acFeCCF59Ea6CF91DeBc5551D88e71aCa3B71";
-  abi = [
-    {
-      inputs: [],
-      name: "get",
-      outputs: [
-        {
-          internalType: "uint256",
-          name: "",
-          type: "uint256",
-        },
-        {
-          internalType: "string",
-          name: "",
-          type: "string",
-        },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [
-        {
-          internalType: "uint256",
-          name: "_num",
-          type: "uint256",
-        },
-      ],
-      name: "set",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-  ];
+  public moveIndex$ = new BehaviorSubject<any>(null);
+  public gameStartedObject$ = new BehaviorSubject<any>(null);
 
-  joinGameAbi = [
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: "uint256",
-          name: "gameId",
-          type: "uint256",
-        },
-        {
-          components: [
-            {
-              components: [
-                {
-                  internalType: "address payable",
-                  name: "playerAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "string",
-                  name: "playerName",
-                  type: "string",
-                },
-              ],
-              internalType: "struct TicTacToe.Player[2]",
-              name: "players",
-              type: "tuple[2]",
-            },
-            {
-              internalType: "uint256",
-              name: "activePlayer",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isRoomActive",
-              type: "bool",
-            },
-            {
-              components: [
-                {
-                  internalType: "address payable",
-                  name: "playerAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "string",
-                  name: "playerName",
-                  type: "string",
-                },
-              ],
-              internalType: "struct TicTacToe.Player",
-              name: "winnerPlayer",
-              type: "tuple",
-            },
-            {
-              internalType: "uint256[9]",
-              name: "board",
-              type: "uint256[9]",
-            },
-            {
-              internalType: "uint256",
-              name: "lastPlayedTime",
-              type: "uint256",
-            },
-            {
-              internalType: "uint8",
-              name: "movedRecorded",
-              type: "uint8",
-            },
-            {
-              internalType: "enum TicTacToe.GameState",
-              name: "state",
-              type: "uint8",
-            },
-          ],
-          indexed: false,
-          internalType: "struct TicTacToe.Room",
-          name: "room",
-          type: "tuple",
-        },
-      ],
-      name: "GameEnded",
-      type: "event",
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: "uint256",
-          name: "gameId",
-          type: "uint256",
-        },
-        {
-          components: [
-            {
-              components: [
-                {
-                  internalType: "address payable",
-                  name: "playerAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "string",
-                  name: "playerName",
-                  type: "string",
-                },
-              ],
-              internalType: "struct TicTacToe.Player[2]",
-              name: "players",
-              type: "tuple[2]",
-            },
-            {
-              internalType: "uint256",
-              name: "activePlayer",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isRoomActive",
-              type: "bool",
-            },
-            {
-              components: [
-                {
-                  internalType: "address payable",
-                  name: "playerAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "string",
-                  name: "playerName",
-                  type: "string",
-                },
-              ],
-              internalType: "struct TicTacToe.Player",
-              name: "winnerPlayer",
-              type: "tuple",
-            },
-            {
-              internalType: "uint256[9]",
-              name: "board",
-              type: "uint256[9]",
-            },
-            {
-              internalType: "uint256",
-              name: "lastPlayedTime",
-              type: "uint256",
-            },
-            {
-              internalType: "uint8",
-              name: "movedRecorded",
-              type: "uint8",
-            },
-            {
-              internalType: "enum TicTacToe.GameState",
-              name: "state",
-              type: "uint8",
-            },
-          ],
-          indexed: false,
-          internalType: "struct TicTacToe.Room",
-          name: "room",
-          type: "tuple",
-        },
-      ],
-      name: "GameInitiated",
-      type: "event",
-    },
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: "uint256",
-          name: "gameId",
-          type: "uint256",
-        },
-        {
-          components: [
-            {
-              components: [
-                {
-                  internalType: "address payable",
-                  name: "playerAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "string",
-                  name: "playerName",
-                  type: "string",
-                },
-              ],
-              internalType: "struct TicTacToe.Player[2]",
-              name: "players",
-              type: "tuple[2]",
-            },
-            {
-              internalType: "uint256",
-              name: "activePlayer",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isRoomActive",
-              type: "bool",
-            },
-            {
-              components: [
-                {
-                  internalType: "address payable",
-                  name: "playerAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "string",
-                  name: "playerName",
-                  type: "string",
-                },
-              ],
-              internalType: "struct TicTacToe.Player",
-              name: "winnerPlayer",
-              type: "tuple",
-            },
-            {
-              internalType: "uint256[9]",
-              name: "board",
-              type: "uint256[9]",
-            },
-            {
-              internalType: "uint256",
-              name: "lastPlayedTime",
-              type: "uint256",
-            },
-            {
-              internalType: "uint8",
-              name: "movedRecorded",
-              type: "uint8",
-            },
-            {
-              internalType: "enum TicTacToe.GameState",
-              name: "state",
-              type: "uint8",
-            },
-          ],
-          indexed: false,
-          internalType: "struct TicTacToe.Room",
-          name: "room",
-          type: "tuple",
-        },
-      ],
-      name: "GameStarted",
-      type: "event",
-    },
-    {
-      inputs: [],
-      name: "GAME_TIMEOUT",
-      outputs: [
-        {
-          internalType: "uint256",
-          name: "",
-          type: "uint256",
-        },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "STAKE",
-      outputs: [
-        {
-          internalType: "uint256",
-          name: "",
-          type: "uint256",
-        },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "contractBalance",
-      outputs: [
-        {
-          internalType: "uint256",
-          name: "",
-          type: "uint256",
-        },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [
-        {
-          internalType: "uint256",
-          name: "gameId",
-          type: "uint256",
-        },
-      ],
-      name: "getBoardForRoom",
-      outputs: [
-        {
-          internalType: "uint256[9]",
-          name: "",
-          type: "uint256[9]",
-        },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [
-        {
-          internalType: "uint256",
-          name: "gameId",
-          type: "uint256",
-        },
-      ],
-      name: "isGameRunning",
-      outputs: [
-        {
-          internalType: "bool",
-          name: "",
-          type: "bool",
-        },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [
-        {
-          components: [
-            {
-              internalType: "address payable",
-              name: "playerAddress",
-              type: "address",
-            },
-            {
-              internalType: "string",
-              name: "playerName",
-              type: "string",
-            },
-          ],
-          internalType: "struct TicTacToe.Player",
-          name: "player",
-          type: "tuple",
-        },
-      ],
-      name: "joinRoom",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [
-        {
-          internalType: "uint256",
-          name: "gameId",
-          type: "uint256",
-        },
-        {
-          internalType: "uint8",
-          name: "boardIndex",
-          type: "uint8",
-        },
-      ],
-      name: "move",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [
-        {
-          internalType: "uint256",
-          name: "gameId",
-          type: "uint256",
-        },
-      ],
-      name: "updateRoomIfExpired",
-      outputs: [
-        {
-          internalType: "enum TicTacToe.GameState",
-          name: "",
-          type: "uint8",
-        },
-      ],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-  ];
-  constructor() {}
+  window: any;
+
+  constructor(private router: Router) {
+    window.web3 = new Web3(Web3.givenProvider || 'http://localhost:7545');
+
+    let options = {
+      filter: {
+          value: [],
+      },
+    }
+    
+    let contract = this.getContract();
+
+    contract.events.GameEnded(options)
+    .on('data', (response: any) => {
+      let gameState = this.parseData(response.returnValues).gameState
+      alert(`Game State: ${gameState}`)
+      this.router.navigateByUrl(`/home`);
+    });
+
+    contract.events.GameStarted(options)
+    .on('data', (response: any) => {
+      console.log(response.returnValues, "GameStarted");
+      this.router.navigateByUrl(`/game/${this.parseData(response.returnValues).id}`);
+      this.gameStartedObject$.next(this.parseData(response.returnValues));
+    });
+
+    contract.events.GameInitiated(options)
+    .on('data', (response: any) => {
+      console.log(response.returnValues, "GameInitiated");
+      this.router.navigateByUrl(`/game/${this.parseData(response.returnValues).id}`); 
+      this.gameStartedObject$.next(this.parseData(response.returnValues));
+    });
+
+    contract.events.PlayerMoved(options)
+    .on('data', (response: any) => {
+      console.log(response.returnValues, "PlayerMoved");
+      if(response.returnValues) {
+        this.moveIndex$.next(this.parseData(response.returnValues));
+      }
+    });
+  };
+
 
   private getAccounts = async () => {
     try {
-      return await window.ethereum.request({ method: "eth_accounts" });
+      return await window.ethereum.request({ method: 'eth_accounts' });
     } catch (e) {
       return [];
     }
   };
 
+  private getContract = () => {
+    return new window.web3.eth.Contract(
+      CONSTANTS.abi,
+      CONSTANTS.contractAddress
+    );
+  };
+
+
+  // Event can be GameStarted/GameInitiated/GameEnded/PlayerMoved
+  public parseData = (event: any) => {
+    if(!event) return {};
+
+    let players = event.room?.players;
+    return {
+      'id': event?.gameId,
+      'name': players[0]?.playerName ?? "_" + "vs" + players[1]?.playerName ?? "_",
+      'currentPlayerIndex': event?.room?.activePlayer,
+      'currentPlayerName': players[event?.room?.activePlayer ?? 0],
+      'winnerName': event?.room?.winnerPlayer?.playerName,
+      'player1': players[0]?.playerName,
+      'player2': players[1]?.playerName,
+      'gameState': this.getState(event?.room?.gameState),
+      'moveIndex': event?.moveIndex,
+      'moveValue': event?.room?.activePlayer == 0 ? "X" : "0",
+      'board': event?.room.board,
+    };
+  }
+
+  private getState = (state: number) => {
+    switch (state) {
+      case 0:
+        return "NOT STARTED";
+      case 1:
+        return "RUNNING";
+      case 2: 
+        return "GAME ENDED WITH WINNER";
+      default:
+        return "DRAW";      
+    }
+  }
+
   public openMetamask = async () => {
     this.loader$.next(true);
-    window.web3 = new Web3(window.ethereum);
     let addresses = await this.getAccounts();
     if (!addresses.length) {
       try {
         addresses = await window.ethereum.enable();
       } catch (e) {
+        console.log("Unable to fetch address");
         return false;
       }
     }
@@ -467,38 +122,94 @@ export class ContractService {
 
   public joinGame = async (data: any) => {
     this.loader$.next(true);
-
     let accaddress = await this.getAccounts();
     try {
-      const contract = new window.web3.eth.Contract(
-        this.joinGameAbi,
-        this.Address
-      );
-      const token = await contract.methods
+      const response = await this.getContract().methods
         .joinRoom({ playerAddress: accaddress[0], playerName: data.name })
         .send({ from: accaddress[0] });
-      this.gameID = token?.events?.GameStarted?.returnValues?.gameId;
-      return token;
     } catch (error) {
       const errorMessage = error;
     }
   };
 
-  public move = async (data: any) => {
+  public move = async (gameId: number, data: any) => {
     this.loader$.next(true);
     let accaddress = await this.getAccounts();
     try {
-      const contract = new window.web3.eth.Contract(
-        this.joinGameAbi,
-        this.Address
-      );
-      const token = await contract.methods
-        .move(this.gameID, data)
+      const response = await this.getContract().methods
+        .move(gameId, data)
         .send({ from: accaddress[0] });
-      return token?.events?.GameEnded?.returnValues?.room?.winnerPlayer
-        ?.playerName;
+      console.log("Player moved on ", response?.events?.PlayerMoved?.returnValues?.moveIndex);
+
+      return response?.events?.PlayerMoved?.returnValues?.moveIndex;
+    } catch (error) {
+      console.log(error);
+      
+      const errorMessage = error;
+    }
+  };
+
+  public ping = async (gameId: number) => {
+    let accaddress = await this.getAccounts();
+    try {
+      const response = await this.getContract().methods
+        .updateRoomIfExpired(gameId)
+        .send({ from: accaddress[0] });
+      console.log("Game State", response?.events?.PlayerMoved?.returnValues?.room.state);
     } catch (error) {
       const errorMessage = error;
+    }
+  };
+
+  public isGameRunning = async (gameId: number) => {
+    console.log("isGameRunning f");
+    try {
+      let accaddress = await this.getAccounts();
+      if(!accaddress) return false;  
+      
+      const response = await this.getContract().methods
+        .isGameRunning(gameId)
+        .call({ from: accaddress[0] });
+      
+      return response;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  public isGameValid = async (gameId: any) => {
+    console.log("isGameValid f");
+    try {
+      let accaddress = await this.getAccounts();
+      
+      if(!accaddress) return false;  
+      
+      const response = await this.getContract().methods
+        .totalGames()
+        .call({ from: accaddress[0] });
+      
+      console.log("response", response);  
+      return response >= gameId;
+    } catch (error) {
+      console.log("error", error);
+      return false;
+    }
+  };
+
+  public getRoom = async (gameId: number) => {
+    try {
+      let accaddress = await this.getAccounts();
+      if(!accaddress) return false;  
+      
+      const response = await this.getContract().methods
+        .rooms(gameId)
+        .call({ from: accaddress[0] });
+      
+      return response;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   };
 }

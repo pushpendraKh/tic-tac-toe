@@ -3,7 +3,7 @@
     <h2>Game Room</h2>
   </div>
 
-  <div class="content-wrapper">
+  <div class="content-wrapper" *ngIf="isGameRunning">
     <div class="board-timer">
       <div>
         <h1
@@ -17,7 +17,7 @@
           <div class="square-container underline" *ngFor="let square of board">
             <div
               class="game-square rounded-lg border bg-teal-lightest shadow-md"
-              (click)="changePlayer(square)"
+              (click)="squareClicked(square)"
               [ngClass]="{ noClick: winner }"
             >
               <p class="text-grey-darker">{{ square.state }}</p>
@@ -45,5 +45,8 @@
         </ul>
       </div>
     </div>
+  </div>
+  <div *ngIf="!isValidGame">
+    "Game is not running"
   </div>
 </div>

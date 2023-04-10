@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { AfterViewInit, Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ContractService } from "src/app/services/contract.service";
 
 @Component({
@@ -6,7 +7,7 @@ import { ContractService } from "src/app/services/contract.service";
   templateUrl: "./game-page.component.html",
   styleUrls: ["./game-page.component.scss"],
 })
-export class GamePageComponent {
+export class GamePageComponent implements OnInit {
   board: any;
   isGameRunning: boolean = false;
   winner: boolean = false;
@@ -15,10 +16,41 @@ export class GamePageComponent {
   turnCount = 0;
   display: any;
   winnerName: any;
+  isValidGame: boolean = false;
 
-  constructor(private contractService: ContractService) {
-    this.newGame();
-    this.timer(1);
+  room: any;
+
+  gameId: number = -1;
+
+  constructor(private route: ActivatedRoute, private contractService: ContractService) {
+    console.log("constructor");
+    
+    this.gameId = route.snapshot.params['id'];
+    this.checkGameState();
+
+  }
+
+  ngOnInit(): void {
+    this.contractService.gameStartedObject$.subscribe((data) => {
+      console.log("gameStartedObject",data);
+      this.room = data;
+      this.newGame();
+      this.timer(2);
+    });
+    this.contractService.moveIndex$.subscribe((data) => {
+      console.log("Move Index",data);
+      if(data) {
+        this.room = data;
+        this.createBoard();
+        this.timer(2);
+      }
+    });
+  }
+
+
+  checkGameState = async () => {
+    this.isGameRunning = await this.contractService.isGameRunning(this.gameId);
+    // console.log(await this.contractService.getRoom(this.gameId));
   }
 
   newGame() {
@@ -27,85 +59,99 @@ export class GamePageComponent {
 
   createBoard() {
     let board = [];
-    for (let i = 0; i < 9; i++) {
-      board.push({ id: i, state: null });
+    console.log(this.room, "room");
+    
+    for (let i = 0; i < this.room.board.length; i++) {
+      board.push({ id: i, state: this.room.board[i] == '1' ? "X" : this.room.board[i] == '2' ? "0" : null});
     }
+    console.log(board);
+    
     return board;
   }
 
-  changePlayer(square: any) {
-    this.isGameRunning = true;
-
-    if (this.isGameRunning && square.state === null) {
-      this.contractService.move(square.id).then((resp) => {
+  async squareClicked(object: any) {    
+    if(this.isGameRunning) {
+      try {        
+        await this.contractService.move(this.gameId, object.id);
         this.contractService.loader$.next(false);
-        this.winnerName = resp;
-      });
-      square.state = this.activePlayer;
-      this.changePlayerTurn(square);
-    }
-  }
-
-  changePlayerTurn(squareClicked: any) {
-    this.updateBoard(squareClicked);
-    if (!this.isGameOver)
-      this.activePlayer = this.activePlayer === "X" ? "O" : "X";
-    this.turnCount++;
-    this.isGameOver = this.isGameOver ? true : false;
-  }
-
-  updateBoard(squareClicked: any) {
-    this.board[squareClicked.id].state = squareClicked.state;
-    if (this.isWinner) {
-      this.winner = true;
-      this.isGameRunning = false;
-      this.isGameOver = true;
-    }
-  }
-
-  get isWinner(): boolean {
-    return this.checkDiag() ||
-      this.checkRows(this.board, "row") ||
-      this.checkRows(this.board, "col")
-      ? true
-      : false;
-  }
-
-  checkDiag() {
-    const timesRun = 2,
-      midSquare = this.board[4].state;
-
-    for (let i = 0; i <= timesRun; i += 2) {
-      let upperCorner = this.board[i].state,
-        lowerCorner = this.board[8 - i].state;
-
-      if (midSquare && upperCorner && lowerCorner) {
-        if (midSquare === upperCorner && upperCorner === lowerCorner)
-          return true;
+      } catch(e) {
+        alert("Error while playing move");
       }
-    }
-
-    return false;
+    } 
   }
 
-  checkRows(board: any, mode: any): boolean {
-    const ROW = mode === "row" ? true : false,
-      DIST = ROW ? 1 : 3,
-      INC = ROW ? 3 : 1,
-      NUMTIMES = ROW ? 7 : 3;
+  // changePlayer(square: any) {
+  //   if (this.isGameRunning && square.state === null) {
+  //     this.contractService.move(this.gameId, square.id).then((resp) => {
+  //       this.contractService.loader$.next(false);
+  //       // this.winnerName = resp;
+  //       this.changePlayerTurn(square);
+  //     });
+  //     square.state = this.activePlayer;
+  //   }
+  // }
 
-    for (let i = 0; i < NUMTIMES; i += INC) {
-      let firstSquare = board[i].state,
-        secondSquare = board[i + DIST].state,
-        thirdSquare = board[i + DIST * 2].state;
+  // private changePlayerTurn(squareClicked: any) {
+  //   this.updateBoard(squareClicked);
+  //   if (!this.isGameOver)
+  //     this.activePlayer = this.activePlayer === "X" ? "O" : "X";
+  //   this.turnCount++;
+  //   this.isGameOver = this.isGameOver ? true : false;
+  // }
 
-      if (firstSquare && secondSquare && thirdSquare) {
-        if (firstSquare === secondSquare && secondSquare === thirdSquare)
-          return true;
-      }
-    }
-    return false;
-  }
+  // updateBoard(squareClicked: any) {
+  //   this.board[squareClicked.id].state = squareClicked.state;
+  //   if (this.isWinner) {
+  //     this.winner = true;
+  //     this.isGameRunning = false;
+  //     this.isGameOver = true;
+  //   }
+  // }
+
+  // get isWinner(): boolean {
+  //   return this.checkDiag() ||
+  //     this.checkRows(this.board, "row") ||
+  //     this.checkRows(this.board, "col")
+  //     ? true
+  //     : false;
+  // }
+
+  // checkDiag() {
+  //   const timesRun = 2,
+  //     midSquare = this.board[4].state;
+
+  //   for (let i = 0; i <= timesRun; i += 2) {
+  //     let upperCorner = this.board[i].state,
+  //       lowerCorner = this.board[8 - i].state;
+
+  //     if (midSquare && upperCorner && lowerCorner) {
+  //       if (midSquare === upperCorner && upperCorner === lowerCorner)
+  //         return true;
+  //     }
+  //   }
+
+  //   return false;
+  // }
+
+  // checkRows(board: any, mode: any): boolean {
+  //   const ROW = mode === "row" ? true : false,
+  //     DIST = ROW ? 1 : 3,
+  //     INC = ROW ? 3 : 1,
+  //     NUMTIMES = ROW ? 7 : 3;
+
+  //   for (let i = 0; i < NUMTIMES; i += INC) {
+  //     let firstSquare = board[i].state,
+  //       secondSquare = board[i + DIST].state,
+  //       thirdSquare = board[i + DIST * 2].state;
+
+  //     if (firstSquare && secondSquare && thirdSquare) {
+  //       if (firstSquare === secondSquare && secondSquare === thirdSquare)
+  //         return true;
+  //     }
+  //   }
+  //   return false;
+  // }
+
   timer(minute: number) {
     // let minute = 1;
     let seconds: number = minute * 60;

@@ -12,6 +12,7 @@ const routes: Routes = [
   {
     path: 'game/:id',
     component: GamePageComponent,
+    
   },
 ];
 

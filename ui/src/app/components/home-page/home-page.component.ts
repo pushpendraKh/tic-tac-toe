@@ -17,7 +17,6 @@ import { Router } from "@angular/router";
 })
 export class HomePageComponent {
   constructor(
-    private router: Router,
     public dialog: MatDialog,
     private contractService: ContractService
   ) {}
@@ -38,15 +37,6 @@ export class HomePageComponent {
   onSubmit() {
     this.contractService.joinGame(this.loginForm.value).then((resp: any) => {
       this.contractService.loader$.next(false);
-
-      if (resp?.events?.GameStarted?.returnValues?.gameId) {
-        this.gamStatus = "Game had strated";
-
-        let id = resp?.events?.GameStarted?.returnValues?.gameId;
-        this.router.navigateByUrl(`/game/${id}`);
-      } else {
-        this.gamStatus = "Waiting for player2 to join";
-      }
     });
   }
 }
