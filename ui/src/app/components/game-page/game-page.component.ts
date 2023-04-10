@@ -1,16 +1,16 @@
-import { Component } from '@angular/core';
-import { ContractService } from 'src/app/services/contract.service';
+import { Component } from "@angular/core";
+import { ContractService } from "src/app/services/contract.service";
 
 @Component({
-  selector: 'app-game-page',
-  templateUrl: './game-page.component.html',
-  styleUrls: ['./game-page.component.scss'],
+  selector: "app-game-page",
+  templateUrl: "./game-page.component.html",
+  styleUrls: ["./game-page.component.scss"],
 })
 export class GamePageComponent {
   board: any;
   isGameRunning: boolean = false;
   winner: boolean = false;
-  activePlayer: string = 'X';
+  activePlayer: string = "X";
   isGameOver: boolean = false;
   turnCount = 0;
   display: any;
@@ -38,6 +38,7 @@ export class GamePageComponent {
 
     if (this.isGameRunning && square.state === null) {
       this.contractService.move(square.id).then((resp) => {
+        this.contractService.loader$.next(false);
         this.winnerName = resp;
       });
       square.state = this.activePlayer;
@@ -48,7 +49,7 @@ export class GamePageComponent {
   changePlayerTurn(squareClicked: any) {
     this.updateBoard(squareClicked);
     if (!this.isGameOver)
-      this.activePlayer = this.activePlayer === 'X' ? 'O' : 'X';
+      this.activePlayer = this.activePlayer === "X" ? "O" : "X";
     this.turnCount++;
     this.isGameOver = this.isGameOver ? true : false;
   }
@@ -64,8 +65,8 @@ export class GamePageComponent {
 
   get isWinner(): boolean {
     return this.checkDiag() ||
-      this.checkRows(this.board, 'row') ||
-      this.checkRows(this.board, 'col')
+      this.checkRows(this.board, "row") ||
+      this.checkRows(this.board, "col")
       ? true
       : false;
   }
@@ -88,7 +89,7 @@ export class GamePageComponent {
   }
 
   checkRows(board: any, mode: any): boolean {
-    const ROW = mode === 'row' ? true : false,
+    const ROW = mode === "row" ? true : false,
       DIST = ROW ? 1 : 3,
       INC = ROW ? 3 : 1,
       NUMTIMES = ROW ? 7 : 3;
@@ -108,10 +109,10 @@ export class GamePageComponent {
   timer(minute: number) {
     // let minute = 1;
     let seconds: number = minute * 60;
-    let textSec: any = '0';
+    let textSec: any = "0";
     let statSec: number = 60;
 
-    const prefix = minute < 10 ? '0' : '';
+    const prefix = minute < 10 ? "0" : "";
 
     const timer = setInterval(() => {
       seconds--;
@@ -119,13 +120,13 @@ export class GamePageComponent {
       else statSec = 59;
 
       if (statSec < 10) {
-        textSec = '0' + statSec;
+        textSec = "0" + statSec;
       } else textSec = statSec;
 
       this.display = `${prefix}${Math.floor(seconds / 60)}:${textSec}`;
 
       if (seconds == 0) {
-        this.display = 'Time Up';
+        this.display = "Time Up";
         clearInterval(timer);
       }
     }, 1000);

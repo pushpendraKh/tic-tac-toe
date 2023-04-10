@@ -1,19 +1,19 @@
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import {
   MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef,
-} from '@angular/material/dialog';
+} from "@angular/material/dialog";
 
-import { Component } from '@angular/core';
-import { ContractService } from 'src/app/services/contract.service';
-import { LoginComponent } from 'src/app/popup/login/login.component';
-import { Router } from '@angular/router';
+import { Component } from "@angular/core";
+import { ContractService } from "src/app/services/contract.service";
+import { LoginComponent } from "src/app/popup/login/login.component";
+import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-home-page',
-  templateUrl: './home-page.component.html',
-  styleUrls: ['./home-page.component.scss'],
+  selector: "app-home-page",
+  templateUrl: "./home-page.component.html",
+  styleUrls: ["./home-page.component.scss"],
 })
 export class HomePageComponent {
   constructor(
@@ -21,9 +21,9 @@ export class HomePageComponent {
     public dialog: MatDialog,
     private contractService: ContractService
   ) {}
-  loginAddress: string = '';
+  loginAddress: string = "";
   loginForm = new FormGroup({
-    name: new FormControl('', [Validators.required]),
+    name: new FormControl("", [Validators.required]),
     // address: new FormControl('', [Validators.required]),
   });
   gamStatus: any;
@@ -31,18 +31,21 @@ export class HomePageComponent {
   login() {
     this.contractService.openMetamask().then((resp) => {
       this.loginAddress = resp;
+      this.contractService.loader$.next(false);
     });
   }
 
   onSubmit() {
     this.contractService.joinGame(this.loginForm.value).then((resp: any) => {
+      this.contractService.loader$.next(false);
+
       if (resp?.events?.GameStarted?.returnValues?.gameId) {
-        this.gamStatus = 'Game had strated';
+        this.gamStatus = "Game had strated";
 
         let id = resp?.events?.GameStarted?.returnValues?.gameId;
         this.router.navigateByUrl(`/game/${id}`);
       } else {
-        this.gamStatus = 'Waiting for player2 to join';
+        this.gamStatus = "Waiting for player2 to join";
       }
     });
   }
