@@ -8,6 +8,7 @@ import { LoginComponent } from './popup/login/login.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     HomePageComponent,
     GamePageComponent,
     LoginComponent,
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,
