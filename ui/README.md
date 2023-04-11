@@ -12,16 +12,16 @@ To run the project, do
 # Game State
 
 ### Home Page
-TODO: UI Image
+![alt text](https://github.com/pushpendraKh/tic-tac-toe/blob/develop/ui/assets/home_page.png)
 
 ### Dashboard
-TODO: UI Image
+![alt text](https://github.com/pushpendraKh/tic-tac-toe/blob/develop/ui/assets/dashboard.png)
 
 ### When Player is waiting for another player to join
-TODO: UI Image
+![alt text](https://github.com/pushpendraKh/tic-tac-toe/blob/develop/ui/assets/waiting.png)
 
 ### When Game Started
-TODO: UI Image
+![alt text](https://github.com/pushpendraKh/tic-tac-toe/blob/develop/ui/assets/running.png)
 
 
 
