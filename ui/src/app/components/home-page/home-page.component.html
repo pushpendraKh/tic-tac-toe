@@ -32,18 +32,16 @@
           <u>Leaderboard</u>
         </h3>
         <table class="table-wrapper">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr>
-              <th>GameId</th>
-              <th>Status</th>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>false</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>true</td>
+            <tr *ngFor="let board of leadershipBoardData">
+              <td>{{ board[0] }}</td>
+              <td>{{ board[1] }}</td>
             </tr>
           </tbody>
         </table>

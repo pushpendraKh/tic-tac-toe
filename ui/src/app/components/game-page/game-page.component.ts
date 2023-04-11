@@ -8,64 +8,71 @@ import { ContractService } from "src/app/services/contract.service";
   styleUrls: ["./game-page.component.scss"],
 })
 export class GamePageComponent implements OnInit {
+  // current state of board
   board: any;
+
+  // if a game is running
   isGameRunning: boolean = false;
-  winner: boolean = false;
-  activePlayer: string = "X";
-  isGameOver: boolean = false;
-  turnCount = 0;
+
+  // timer running text
   display: any;
-  winnerName: any;
+
+  // Current state for the game
+  gameState: any = '';
+
+  // current active player who is playing
+  activePlayer: string = "";
+
+  // to check if user entered into a game which exists
   isValidGame: boolean = false;
 
-  room: any;
+  // defined when we have winner
+  winner: string = "-";
 
+  // current game id
   gameId: number = -1;
 
   constructor(private route: ActivatedRoute, private contractService: ContractService) {
-    console.log("constructor");
-    
+    console.log("Constructor::GamePageComponent");
     this.gameId = route.snapshot.params['id'];
     this.checkGameState();
-
   }
 
   ngOnInit(): void {
-    this.contractService.gameStartedObject$.subscribe((data) => {
-      console.log("gameStartedObject",data);
-      this.room = data;
-      this.newGame();
-      this.timer(2);
+    this.contractService.gameStarted$.subscribe((_) => {
+        this.checkGameState();
     });
-    this.contractService.moveIndex$.subscribe((data) => {
-      console.log("Move Index",data);
-      if(data) {
-        this.room = data;
-        this.newGame();
-        this.timer(2);
+
+    this.contractService.moveIndex$.subscribe((didMakeAMove) => {
+      if(didMakeAMove) {
+        this.checkGameState();
       }
     });
   }
 
-
-  checkGameState = async () => {
-    this.isGameRunning = await this.contractService.isGameRunning(this.gameId);
-    // console.log(await this.contractService.getRoom(this.gameId));
+  private checkGameState = async () => {
+    this.isValidGame = await this.contractService.isGameValid(this.gameId);
+    if(this.isValidGame) {
+      this.isGameRunning = await this.contractService.isGameRunning(this.gameId);
+      this.gameState = await this.contractService.gameState(this.gameId);
+      if(this.isGameRunning) {
+        this.activePlayer = await this.contractService.currentActivePlayer(this.gameId);
+        this.winner = await this.contractService.winnerName(this.gameId);
+        this.setBoard();
+        this.timer(2);
+      }  
+    }
   }
 
-  newGame() {
-    this.board = this.createBoard();
-    console.log(this.board);
-  }
-
-  createBoard() {
-    let board = [];
-    console.log(this.room, "room");
+  async setBoard() {
+    let _board = [];
     
-    for (let i = 0; i < this.room.board.length; i++) {
-      board.push({ id: i, state: this.room.board[i] == '1' ? "X" : this.room.board[i] == '2' ? "0" : null});
+    let currentBoard = await this.contractService.getCurrentBoardState(this.gameId);
+    for (let i = 0; i < currentBoard.length; i++) {
+      _board.push({ id: i, state: currentBoard[i] == '1' ? "X" : currentBoard[i] == '2' ? "0" : null}); // a hack, work fine on contract
     }    
-    return board;
+
+    this.board = _board;
   }
 
   async squareClicked(object: any) {    
@@ -74,92 +81,20 @@ export class GamePageComponent implements OnInit {
         await this.contractService.move(this.gameId, object.id);
         this.contractService.loader$.next(false);
       } catch(e) {
-        alert("Error while playing move");
+        alert("e");
+        console.log("squareClicked::", e);
       }
     } 
   }
 
-  // changePlayer(square: any) {
-  //   if (this.isGameRunning && square.state === null) {
-  //     this.contractService.move(this.gameId, square.id).then((resp) => {
-  //       this.contractService.loader$.next(false);
-  //       // this.winnerName = resp;
-  //       this.changePlayerTurn(square);
-  //     });
-  //     square.state = this.activePlayer;
-  //   }
-  // }
-
-  // private changePlayerTurn(squareClicked: any) {
-  //   this.updateBoard(squareClicked);
-  //   if (!this.isGameOver)
-  //     this.activePlayer = this.activePlayer === "X" ? "O" : "X";
-  //   this.turnCount++;
-  //   this.isGameOver = this.isGameOver ? true : false;
-  // }
-
-  // updateBoard(squareClicked: any) {
-  //   this.board[squareClicked.id].state = squareClicked.state;
-  //   if (this.isWinner) {
-  //     this.winner = true;
-  //     this.isGameRunning = false;
-  //     this.isGameOver = true;
-  //   }
-  // }
-
-  // get isWinner(): boolean {
-  //   return this.checkDiag() ||
-  //     this.checkRows(this.board, "row") ||
-  //     this.checkRows(this.board, "col")
-  //     ? true
-  //     : false;
-  // }
-
-  // checkDiag() {
-  //   const timesRun = 2,
-  //     midSquare = this.board[4].state;
-
-  //   for (let i = 0; i <= timesRun; i += 2) {
-  //     let upperCorner = this.board[i].state,
-  //       lowerCorner = this.board[8 - i].state;
-
-  //     if (midSquare && upperCorner && lowerCorner) {
-  //       if (midSquare === upperCorner && upperCorner === lowerCorner)
-  //         return true;
-  //     }
-  //   }
-
-  //   return false;
-  // }
-
-  // checkRows(board: any, mode: any): boolean {
-  //   const ROW = mode === "row" ? true : false,
-  //     DIST = ROW ? 1 : 3,
-  //     INC = ROW ? 3 : 1,
-  //     NUMTIMES = ROW ? 7 : 3;
-
-  //   for (let i = 0; i < NUMTIMES; i += INC) {
-  //     let firstSquare = board[i].state,
-  //       secondSquare = board[i + DIST].state,
-  //       thirdSquare = board[i + DIST * 2].state;
-
-  //     if (firstSquare && secondSquare && thirdSquare) {
-  //       if (firstSquare === secondSquare && secondSquare === thirdSquare)
-  //         return true;
-  //     }
-  //   }
-  //   return false;
-  // }
-
   timer(minute: number) {
-    // let minute = 1;
     let seconds: number = minute * 60;
     let textSec: any = "0";
     let statSec: number = 60;
 
     const prefix = minute < 10 ? "0" : "";
 
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       seconds--;
       if (statSec != 0) statSec--;
       else statSec = 59;
@@ -173,6 +108,7 @@ export class GamePageComponent implements OnInit {
       if (seconds == 0) {
         this.display = "Time Up";
         clearInterval(timer);
+        await this.contractService.ping(this.gameId);
       }
     }, 1000);
   }

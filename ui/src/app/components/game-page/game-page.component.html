@@ -3,13 +3,12 @@
     <h2>Game Room</h2>
   </div>
 
-  <div class="content-wrapper" *ngIf="isGameRunning">
-    <div class="board-timer">
+  <div class="content-wrapper" *ngIf="isValidGame">
+    <div class="board-timer" *ngIf="isGameRunning">
       <div>
         <h1
-          class="text-center text-orange"
+          class="text-center text-orange text-teal"
           *ngIf="isGameRunning"
-          [ngClass]="{ 'text-teal': activePlayer == 'O' }"
         >
           {{ activePlayer }}'S TURN
         </h1>
@@ -33,20 +32,11 @@
         </div>
       </div>
     </div>
-
-    <div class="detials-wrapper">
-      <h3>Details</h3>
-      <div class="detials-sub-wrapper">
-        <ul>
-          <li>WinnerName: {{ winnerName }}</li>
-          <li>WinnerName: {{ winnerName }}</li>
-          <li>WinnerName: {{ winnerName }}</li>
-          <li>WinnerName: {{ winnerName }}</li>
-        </ul>
-      </div>
-    </div>
+    <div *ngIf="!isGameRunning">
+      {{ gameState  }} 
+     </div>
   </div>
   <div *ngIf="!isValidGame">
-    "Game is not running"
+    {{ gameState  }} 
   </div>
 </div>

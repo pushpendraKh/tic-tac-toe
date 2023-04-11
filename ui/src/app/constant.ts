@@ -8,78 +8,6 @@ export default {
           "internalType": "uint256",
           "name": "gameId",
           "type": "uint256"
-        },
-        {
-          "components": [
-            {
-              "components": [
-                {
-                  "internalType": "address payable",
-                  "name": "playerAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "string",
-                  "name": "playerName",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct TicTacToe.Player[2]",
-              "name": "players",
-              "type": "tuple[2]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "activePlayer",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bool",
-              "name": "isRoomActive",
-              "type": "bool"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "address payable",
-                  "name": "playerAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "string",
-                  "name": "playerName",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct TicTacToe.Player",
-              "name": "winnerPlayer",
-              "type": "tuple"
-            },
-            {
-              "internalType": "uint256[9]",
-              "name": "board",
-              "type": "uint256[9]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "lastPlayedTime",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint8",
-              "name": "movedRecorded",
-              "type": "uint8"
-            },
-            {
-              "internalType": "enum TicTacToe.GameState",
-              "name": "state",
-              "type": "uint8"
-            }
-          ],
-          "indexed": false,
-          "internalType": "struct TicTacToe.Room",
-          "name": "room",
-          "type": "tuple"
         }
       ],
       "name": "GameEnded",
@@ -93,78 +21,6 @@ export default {
           "internalType": "uint256",
           "name": "gameId",
           "type": "uint256"
-        },
-        {
-          "components": [
-            {
-              "components": [
-                {
-                  "internalType": "address payable",
-                  "name": "playerAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "string",
-                  "name": "playerName",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct TicTacToe.Player[2]",
-              "name": "players",
-              "type": "tuple[2]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "activePlayer",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bool",
-              "name": "isRoomActive",
-              "type": "bool"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "address payable",
-                  "name": "playerAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "string",
-                  "name": "playerName",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct TicTacToe.Player",
-              "name": "winnerPlayer",
-              "type": "tuple"
-            },
-            {
-              "internalType": "uint256[9]",
-              "name": "board",
-              "type": "uint256[9]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "lastPlayedTime",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint8",
-              "name": "movedRecorded",
-              "type": "uint8"
-            },
-            {
-              "internalType": "enum TicTacToe.GameState",
-              "name": "state",
-              "type": "uint8"
-            }
-          ],
-          "indexed": false,
-          "internalType": "struct TicTacToe.Room",
-          "name": "room",
-          "type": "tuple"
         }
       ],
       "name": "GameInitiated",
@@ -178,78 +34,6 @@ export default {
           "internalType": "uint256",
           "name": "gameId",
           "type": "uint256"
-        },
-        {
-          "components": [
-            {
-              "components": [
-                {
-                  "internalType": "address payable",
-                  "name": "playerAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "string",
-                  "name": "playerName",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct TicTacToe.Player[2]",
-              "name": "players",
-              "type": "tuple[2]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "activePlayer",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bool",
-              "name": "isRoomActive",
-              "type": "bool"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "address payable",
-                  "name": "playerAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "string",
-                  "name": "playerName",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct TicTacToe.Player",
-              "name": "winnerPlayer",
-              "type": "tuple"
-            },
-            {
-              "internalType": "uint256[9]",
-              "name": "board",
-              "type": "uint256[9]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "lastPlayedTime",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint8",
-              "name": "movedRecorded",
-              "type": "uint8"
-            },
-            {
-              "internalType": "enum TicTacToe.GameState",
-              "name": "state",
-              "type": "uint8"
-            }
-          ],
-          "indexed": false,
-          "internalType": "struct TicTacToe.Room",
-          "name": "room",
-          "type": "tuple"
         }
       ],
       "name": "GameStarted",
@@ -265,81 +49,9 @@ export default {
           "type": "uint256"
         },
         {
-          "components": [
-            {
-              "components": [
-                {
-                  "internalType": "address payable",
-                  "name": "playerAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "string",
-                  "name": "playerName",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct TicTacToe.Player[2]",
-              "name": "players",
-              "type": "tuple[2]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "activePlayer",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bool",
-              "name": "isRoomActive",
-              "type": "bool"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "address payable",
-                  "name": "playerAddress",
-                  "type": "address"
-                },
-                {
-                  "internalType": "string",
-                  "name": "playerName",
-                  "type": "string"
-                }
-              ],
-              "internalType": "struct TicTacToe.Player",
-              "name": "winnerPlayer",
-              "type": "tuple"
-            },
-            {
-              "internalType": "uint256[9]",
-              "name": "board",
-              "type": "uint256[9]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "lastPlayedTime",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint8",
-              "name": "movedRecorded",
-              "type": "uint8"
-            },
-            {
-              "internalType": "enum TicTacToe.GameState",
-              "name": "state",
-              "type": "uint8"
-            }
-          ],
-          "indexed": false,
-          "internalType": "struct TicTacToe.Room",
-          "name": "room",
-          "type": "tuple"
-        },
-        {
           "indexed": false,
           "internalType": "uint256",
-          "name": "moveIndex",
+          "name": "index",
           "type": "uint256"
         }
       ],
@@ -393,7 +105,45 @@ export default {
           "type": "uint256"
         }
       ],
-      "name": "getBoardForRoom",
+      "name": "currentActivePlayer",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "gameState",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getBoard",
       "outputs": [
         {
           "internalType": "uint256[9]",
@@ -449,6 +199,13 @@ export default {
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "leaderboard",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -457,7 +214,7 @@ export default {
         },
         {
           "internalType": "uint8",
-          "name": "boardIndex",
+          "name": "index",
           "type": "uint8"
         }
       ],
@@ -553,8 +310,27 @@ export default {
       ],
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "winnerName",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     }
   ],
-  contractAddress: '0x5e3Ad148730EcEFDA58fDD3e38779197e3aa5Bec',
+  contractAddress: '0x012Dc2466B9Cc1a97Ca175Da6E41d82633Af49E8',
 };
 
