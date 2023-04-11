@@ -1,16 +1,13 @@
-<div class="everything-wrapper">
-  <div class="title">
-    <h2>Game Room</h2>
-  </div>
-
-  <div class="content-wrapper" *ngIf="isValidGame">
+<div class="container">
+  <div class="card">
+    <h1 class="card-title">Game Room</h1>
     <div class="board-timer" *ngIf="isGameRunning">
       <div>
         <h1
-          class="text-center text-orange text-teal"
+          class="text-center"
           *ngIf="isGameRunning"
         >
-          {{ activePlayer }}'S TURN
+          {{ activePlayer }}'s Turn
         </h1>
         <div class="section-wrapper">
           <div class="square-container underline" *ngFor="let square of board">
@@ -19,7 +16,7 @@
               (click)="squareClicked(square)"
               [ngClass]="{ noClick: winner }"
             >
-              <p class="text-grey-darker">{{ square.state }}</p>
+              <p class="">{{ square.state }}</p>
             </div>
           </div>
         </div>
@@ -32,11 +29,6 @@
         </div>
       </div>
     </div>
-    <div *ngIf="!isGameRunning">
-      {{ gameState  }} 
-     </div>
-  </div>
-  <div *ngIf="!isValidGame">
-    {{ gameState  }} 
+    <p class="card-description" *ngIf="!isGameRunning">{{ gameState }}</p>
   </div>
 </div>

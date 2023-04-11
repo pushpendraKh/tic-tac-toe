@@ -55,6 +55,8 @@ export class GamePageComponent implements OnInit {
     if(this.isValidGame) {
       this.isGameRunning = await this.contractService.isGameRunning(this.gameId);
       this.gameState = await this.contractService.gameState(this.gameId);
+      console.log(this.gameState);
+      
       if(this.isGameRunning) {
         this.activePlayer = await this.contractService.currentActivePlayer(this.gameId);
         this.winner = await this.contractService.winnerName(this.gameId);

@@ -14,13 +14,6 @@
   justify-content: space-evenly;
 }
 
-.title {
-  h2 {
-    font-size: 35px;
-    text-decoration: underline;
-  }
-}
-
 .square-container {
   flex: 0 0 32%;
   font-weight: 700;
@@ -39,10 +32,12 @@
 }
 
 p {
-  display: inline;
+  display: flex;
   margin: 0px;
-  font-size: 9rem;
+  font-size: 6rem;
   overflow: hidden;
+  justify-content: center;
+  align-items: center;
 }
 
 .noClick {
@@ -87,3 +82,35 @@ p {
     margin-bottom: 10px;
   }
 }
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.card-title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.card-description {
+  font-size: 24px;
+  line-height: 1.5;
+  color: #666;
+}
+
