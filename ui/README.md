@@ -1,27 +1,28 @@
 # TicTacToe
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.1.1.
+## Prerequisite
+You should have angular-cli installed. If not, [checkout this page](https://angular.io/cli)
 
-## Development server
-Install the dependencies using `npm install` (might have to use the `--legacy-peer-deps` flag with npm version `8.19.3`)
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+To run the project, do 
+1. Navigate to tic-tac-toe/ui/ folder
+2. npm install
+3. ng serve
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+# Game State
 
-## Build
+### Home Page
+TODO: UI Image
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Dashboard
+TODO: UI Image
 
-## Running unit tests
+### When Player is waiting for another player to join
+TODO: UI Image
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### When Game Started
+TODO: UI Image
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
-## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
