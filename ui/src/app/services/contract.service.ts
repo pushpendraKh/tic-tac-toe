@@ -58,9 +58,7 @@ export class ContractService {
     contract.events.GameEnded(options)
     .on('data', (response: any) => {
       console.log("Event::GameEnded", response);
-      
-      // TODO: Rohit land user to dashboard
-      this.router.navigateByUrl(`/home`);
+      this.router.navigateByUrl(`/dashboard`);
     });
   }
 

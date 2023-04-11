@@ -39,8 +39,13 @@ export class GamePageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.contractService.gameStarted$.subscribe((_) => {
+    this.contractService.gameStarted$.subscribe((started) => {
+      if(started) {
+        window.location.reload();
+      } else {
         this.checkGameState();
+      }
+        
     });
 
     this.contractService.moveIndex$.subscribe((didMakeAMove) => {
@@ -55,7 +60,6 @@ export class GamePageComponent implements OnInit {
     if(this.isValidGame) {
       this.isGameRunning = await this.contractService.isGameRunning(this.gameId);
       this.gameState = await this.contractService.gameState(this.gameId);
-      console.log(this.gameState);
       
       if(this.isGameRunning) {
         this.activePlayer = await this.contractService.currentActivePlayer(this.gameId);
@@ -109,9 +113,10 @@ export class GamePageComponent implements OnInit {
 
       if (seconds == 0) {
         this.display = "Time Up";
-        clearInterval(timer);
         await this.contractService.ping(this.gameId);
+        clearInterval(timer);
       }
     }, 1000);
   }
+  
 }
