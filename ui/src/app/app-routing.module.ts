@@ -1,17 +1,26 @@
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from "@angular/router";
 
-import { GamePageComponent } from './components/game-page/game-page.component';
-import { HomePageComponent } from './components/home-page/home-page.component';
-import { NgModule } from '@angular/core';
+import { DashboardComponent } from "./dashboard/dashboard.component";
+import { GamePageComponent } from "./components/game-page/game-page.component";
+import { HomePageComponent } from "./components/home-page/home-page.component";
+import { NgModule } from "@angular/core";
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: "",
     component: HomePageComponent,
   },
   {
-    path: 'game/:id',
+    path: "home",
+    component: HomePageComponent,
+  },
+  {
+    path: "game/:id",
     component: GamePageComponent,
+  },
+  {
+    path: "dashboard",
+    component: DashboardComponent,
   },
 ];
 

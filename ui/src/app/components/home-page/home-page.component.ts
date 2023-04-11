@@ -5,7 +5,7 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 
-import { Component } from "@angular/core";
+import { Component, OnChanges, SimpleChanges } from "@angular/core";
 import { ContractService } from "src/app/services/contract.service";
 import { LoginComponent } from "src/app/popup/login/login.component";
 import { Router } from "@angular/router";
@@ -15,18 +15,20 @@ import { Router } from "@angular/router";
   templateUrl: "./home-page.component.html",
   styleUrls: ["./home-page.component.scss"],
 })
-export class HomePageComponent {
+export class HomePageComponent implements OnChanges {
   constructor(
-    private router: Router,
     public dialog: MatDialog,
     private contractService: ContractService
   ) {}
+  
   loginAddress: string = "";
   loginForm = new FormGroup({
     name: new FormControl("", [Validators.required]),
     // address: new FormControl('', [Validators.required]),
   });
   gamStatus: any;
+  leadershipBoardData = [];
+
 
   login() {
     this.contractService.openMetamask().then((resp) => {
@@ -38,15 +40,26 @@ export class HomePageComponent {
   onSubmit() {
     this.contractService.joinGame(this.loginForm.value).then((resp: any) => {
       this.contractService.loader$.next(false);
-
-      if (resp?.events?.GameStarted?.returnValues?.gameId) {
-        this.gamStatus = "Game had strated";
-
-        let id = resp?.events?.GameStarted?.returnValues?.gameId;
-        this.router.navigateByUrl(`/game/${id}`);
-      } else {
-        this.gamStatus = "Waiting for player2 to join";
-      }
     });
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log("ngOnChanges");
+    this.setLeaderBoard();
+    
+  }
+
+
+ async setLeaderBoard() {
+  let games = await this.contractService.totalGames();
+
+  let leaderBoard: any = [];
+  for (let index = 0; index < games; index++) {
+    let winner = await this.contractService.winnerName(index + 1);
+    leaderBoard.push([index + 1,winner]);
+  }
+  this.leadershipBoardData = leaderBoard;
+ }
+
+
 }
