@@ -7,8 +7,7 @@ import "hardhat/console.sol";
 import "./Token.sol";
 import "./NFT.sol";
 
-// You will need TOKEN CONTRACT ADDRESS and NFT CONTRACT ADDRESS where they are deployed 
-// And Update in TicTacToe contract
+// Note: You will need TOKEN CONTRACT ADDRESS and NFT CONTRACT ADDRESS where they are deployed 
 contract TicTacToe {
     struct Player {
         address payable playerAddress;
@@ -34,11 +33,11 @@ contract TicTacToe {
     }
 
     // Deployed Address for the Token  
-    address private constant TOKEN_CONTRACT_ADDRESS = 0x0498B7c793D7432Cd9dB27fb02fc9cfdBAfA1Fd3;
+    address private constant TOKEN_CONTRACT_ADDRESS = 0x00AF5Cf1A775b0597f96A253F79663bd9A5BD106;
     IERC20 private token = IERC20(TOKEN_CONTRACT_ADDRESS);
     
     // Deployed Address for the NFT 
-    address private constant NFT_CONTRACT_ADDRESS = 0xA72D8d4c4611c702dE430124A240E54fC78fA905;
+    address private constant NFT_CONTRACT_ADDRESS = 0x6a47766e87Cb800CC4C9cB46Ab505fc2b99E5a23;
     NFT private nft = NFT(NFT_CONTRACT_ADDRESS);
 
     // Define Timeout for the game
@@ -62,10 +61,10 @@ contract TicTacToe {
     bool private isPlayerWaiting = false;
 
     // Events
-    event GameInitiated(uint256 indexed gameId, Room room);
-    event GameStarted(uint256 indexed gameId, Room room);
-    event GameEnded(uint256 indexed gameId, Room room);
-    event PlayerMoved(uint256 indexed gameId, Room room, uint256 moveIndex);
+    event GameInitiated(uint256 indexed gameId);
+    event GameStarted(uint256 indexed gameId);
+    event GameEnded(uint256 indexed gameId);
+    event PlayerMoved(uint256 indexed gameId, uint index);
 
     /// Allow a player to join the room and return the game ID
     ///
@@ -83,24 +82,24 @@ contract TicTacToe {
             rooms[currentRoomId].lastPlayedTime = block.timestamp;
             isPlayerWaiting = false;
             tossGame();
-            emit GameStarted(currentRoomId, rooms[currentRoomId]);
+            emit GameStarted(currentRoomId);
             console.log("Player 2 also entered into game, Let's begin!! and the turn is for %s", rooms[currentRoomId].players[rooms[currentRoomId].activePlayer].playerName);
         } else {
            rooms[++currentRoomId].players[0] = player; // Player(payable(player.playerAddress),player.playerName);
            isPlayerWaiting = true;
            console.log("Player 1 entered into game, waiting for player 2");
            rooms[currentRoomId].state = GameState.NOTSTART;
-           emit GameInitiated(currentRoomId, rooms[currentRoomId]);
+           emit GameInitiated(currentRoomId);
         }
     }
 
     /// Record a move by a player on the board for a given game ID
-    function move(uint gameId, uint8 boardIndex) public {
+    function move(uint gameId, uint8 index) public {
         require(currentRoomId >= gameId, "Room does not exist");
-        require(boardIndex <= 8, "Invalid move. Please enter in the board.");
+        require(index <= 8, "Invalid move. Please enter in the board.");
         require(msg.sender == rooms[gameId].players[0].playerAddress || msg.sender == rooms[gameId].players[1].playerAddress, "Unknown player");
         require(rooms[gameId].isRoomActive, "Game is Over");
-        require(rooms[gameId].board[boardIndex] == 0, "Another Player already played this move. Try another"); 
+        require(rooms[gameId].board[index] == 0, "Another Player already played this move. Try another"); 
         require(msg.sender == rooms[gameId].players[rooms[gameId].activePlayer].playerAddress, "It's not your turn. Please wait");
         
 
@@ -113,7 +112,7 @@ contract TicTacToe {
 
         // record the move in the game
         uint256 whichPlayer = rooms[gameId].activePlayer + 1;
-        rooms[gameId].board[boardIndex] = whichPlayer;
+        rooms[gameId].board[index] = whichPlayer;
         rooms[gameId].movedRecorded++;
 
         //check winner or game over conditions
@@ -133,7 +132,7 @@ contract TicTacToe {
             rooms[gameId].lastPlayedTime = block.timestamp;
         }
 
-        emit PlayerMoved(gameId, rooms[gameId], boardIndex);
+        emit PlayerMoved(gameId, index);
         // Display board for visiblity for another player.
         displayBoard(gameId);    
     }
@@ -157,7 +156,7 @@ contract TicTacToe {
         rewardWinnerWithToken(gameId);
         rewardWinnerWithNFT(gameId);
         
-        emit GameEnded(gameId,rooms[gameId]);
+        emit GameEnded(gameId);
         console.log("Congratulations %s for winning the game.", rooms[gameId].winnerPlayer.playerName);
     }
 
@@ -214,13 +213,8 @@ contract TicTacToe {
 
         token.transferFrom(sender, address(this), amount);
     }
-     
-    // Display room's board current state for a game
-    function getBoardForRoom(uint gameId) external view returns(uint256[9] memory) {
-        require(rooms[gameId].players[0].playerAddress != address(0), "Game does not exist");
-        return rooms[gameId].board;
-    }
 
+    // Display's user friendly board state 
     function displayBoard(uint gameId) private view {
         console.log("Here is the current state of board for Game %s", gameId);
         uint[9] memory board = rooms[gameId].board;
@@ -232,6 +226,18 @@ contract TicTacToe {
         console.log("%s | %s | %s", getBoardDisplayItem(board[6]), getBoardDisplayItem(board[7]), getBoardDisplayItem(board[8]));
     }
 
+    // Leaderboard 
+    function leaderboard() public view {
+        console.log("LeaderBoard"); 
+        for (uint i = 0; i < currentRoomId; i++) {
+            console.log("-------------------------------------");
+            console.log("%s | %s | %s", "Game ID", "Winner", "Was it a draw?");
+            console.log("-------------------------------------");
+            console.log("%s | %s | %s", i+1, winnerName(i), rooms[i].state == GameState.DRAW ? "yes" : "no");
+        }
+    }
+
+    // Utility function to show move. 
     function getBoardDisplayItem(uint _move) private pure returns (string memory)  {
         if (_move == 1) {
             return "X";
@@ -242,8 +248,53 @@ contract TicTacToe {
         }
     }
 
+    // Display room's board current state for a game
+    function getBoard(uint gameId) external view returns(uint256[9] memory) {
+        require(rooms[gameId].players[0].playerAddress != address(0), "Game does not exist");
+        return rooms[gameId].board;
+    }
+
+    // Returns total number of games played till date
     function totalGames() public view returns (uint) {
         return currentRoomId;
     }
-    
+
+    // Returns winner's name for a game
+    function winnerName(uint256 gameId) public view returns (string memory) {
+        require(currentRoomId >= gameId, "Invalid game");
+
+        return rooms[gameId].winnerPlayer.playerName;
+    }
+
+    // Returns active player for a game
+    function currentActivePlayer(uint256 gameId) public view returns (string memory) {
+        require(currentRoomId >= gameId, "Invalid game");
+        require(rooms[gameId].state != GameState.NOTSTART, "No active player at this time");
+
+        return rooms[gameId].players[rooms[gameId].activePlayer].playerName;
+    }
+
+    // Returns user friendly state for the game
+    function gameState(uint256 gameId) public view returns (string memory) {
+        if(currentRoomId < gameId) {
+            return "Game does not exists. If you want to play, please got to home page and start.";
+        } else {
+            if(rooms[gameId].isRoomActive) {
+                if (rooms[gameId].state == GameState.RUNNING) {
+                    return "Game is on-going";
+                } else if (rooms[gameId].state == GameState.WINNING) {
+                    return "Game is over";
+                } else {
+                    return "It's a draw";
+                }
+            } else {
+                if(rooms[gameId].state == GameState.NOTSTART) {
+                    return "Game is not started yet. Waiting for another player to join";
+                } else {
+                    return string.concat("Game is over. And winner for the round was ", winnerName(gameId));
+                }
+                
+            }
+        }
+    }
 }
