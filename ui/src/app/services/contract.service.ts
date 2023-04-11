@@ -86,23 +86,25 @@ export class ContractService {
       'winnerName': event?.room?.winnerPlayer?.playerName,
       'player1': players[0]?.playerName,
       'player2': players[1]?.playerName,
-      'gameState': this.getState(event?.room?.gameState),
+      'gameState': this.getState(event?.room?.state),
       'moveIndex': event?.moveIndex,
       'moveValue': event?.room?.activePlayer == 0 ? "X" : "0",
       'board': event?.room.board,
     };
   }
 
-  private getState = (state: number) => {
+  private getState = (state: any) => {
     switch (state) {
-      case 0:
+      case "0":
         return "NOT STARTED";
-      case 1:
+      case "1":
         return "RUNNING";
-      case 2: 
+      case "2": 
         return "GAME ENDED WITH WINNER";
-      default:
+      case "3":
         return "DRAW";      
+      default:
+        return "NOT SURE";
     }
   }
 

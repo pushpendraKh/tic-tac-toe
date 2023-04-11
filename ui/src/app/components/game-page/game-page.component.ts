@@ -41,7 +41,7 @@ export class GamePageComponent implements OnInit {
       console.log("Move Index",data);
       if(data) {
         this.room = data;
-        this.createBoard();
+        this.newGame();
         this.timer(2);
       }
     });
@@ -55,6 +55,7 @@ export class GamePageComponent implements OnInit {
 
   newGame() {
     this.board = this.createBoard();
+    console.log(this.board);
   }
 
   createBoard() {
@@ -63,9 +64,7 @@ export class GamePageComponent implements OnInit {
     
     for (let i = 0; i < this.room.board.length; i++) {
       board.push({ id: i, state: this.room.board[i] == '1' ? "X" : this.room.board[i] == '2' ? "0" : null});
-    }
-    console.log(board);
-    
+    }    
     return board;
   }
 
