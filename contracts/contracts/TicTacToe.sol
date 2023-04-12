@@ -76,6 +76,7 @@ contract TicTacToe {
         stakeAmount(player.playerAddress, STAKE);
 
         if(isPlayerWaiting) {
+            require(rooms[currentRoomId].players[0].playerAddress != player.playerAddress, "Bad, you have already joined the game");
             rooms[currentRoomId].players[1] = player;
             rooms[currentRoomId].isRoomActive = true;
             rooms[currentRoomId].state = GameState.RUNNING;
