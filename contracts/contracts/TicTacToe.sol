@@ -275,7 +275,7 @@ contract TicTacToe {
     }
 
     // Returns user friendly state for the game
-    function gameState(uint256 gameId) public view returns (string memory) {
+        function gameState(uint256 gameId) public view returns (string memory) {
         if(currentRoomId < gameId) {
             return "Game does not exists. If you want to play, please got to home page and start.";
         } else {
@@ -290,6 +290,8 @@ contract TicTacToe {
             } else {
                 if(rooms[gameId].state == GameState.NOTSTART) {
                     return "Game is not started yet. Waiting for another player to join";
+                } else if(rooms[gameId].state == GameState.DRAW) {
+                    return "It was a draw!";
                 } else {
                     return string.concat("Game is over. And winner for the round was ", winnerName(gameId));
                 }
